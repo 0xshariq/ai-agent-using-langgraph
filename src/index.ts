@@ -5,6 +5,7 @@ import { ToolNode } from '@langchain/langgraph/prebuilt';
 import { TavilySearch } from '@langchain/tavily';
 import { MemorySaver } from '@langchain/langgraph';
 import { config } from 'dotenv';
+import { BaseMessage } from '@langchain/core/messages';
 
 
 config({
@@ -48,7 +49,11 @@ const llm = new ChatGroq({
     maxRetries: 2,
 }).bindTools(tools);
 
-async function callModel(state) {
+interface AgentState {
+    messages: BaseMessage[];
+}
+
+async function callModel(state: typeof MessagesAnnotation.State): Promise<{ messages: BaseMessage[] }> {
     // call the LLM using APIs
     console.log('Calling LLM....');
     const response = await llm.invoke(state.messages);
